@@ -12,7 +12,7 @@ install_packages() {
     curl -sL "$PACKAGES_URL" -o "$tmpfile" || error "Failed to fetch packages list!"
 
     # تصفية التعليقات والأسطر الفارغة
-    local packages=$(grep -v '^#' "$tmpfile" | grep -v '^$' | tr '\n' ' ')
+    local packages=$(grep -v "^#" "$tmpfile" | grep -v "^$" | sed "s/[[:space:]]//g" | tr "\n" " ")
     rm -f "$tmpfile"
 
     # تثبيت الحزم
