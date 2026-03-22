@@ -26,8 +26,11 @@ install_zerolinux_packages() {
     step "Installing ZeroLinux custom packages"
 
     local tmpdir=$(mktemp -d)
+    chown "$REAL_USER":"$REAL_USER" "$tmpdir"
+
     info "Cloning zerolinux-packages..."
-    git clone --depth=1 "https://github.com/zerolinux-os/zerolinux-packages.git" \
+    sudo -u "$REAL_USER" git clone --depth=1 \
+        "https://github.com/zerolinux-os/zerolinux-packages.git" \
         "$tmpdir/repo" || error "Failed to clone zerolinux-packages!"
 
     local pkgs=(
@@ -42,9 +45,8 @@ install_zerolinux_packages() {
     for pkg in "${pkgs[@]}"; do
         info "Installing $pkg..."
         cd "$tmpdir/repo/$pkg"
-        chown -R "$REAL_USER":"$REAL_USER" "$tmpdir/repo/$pkg"
         sudo -u "$REAL_USER" makepkg -si --noconfirm && \
-            success "$pkg installed" || warning "$pkg failed - check manually"
+            success "$pkg installed" || warning "$pkg failed"
         cd /tmp
     done
 
