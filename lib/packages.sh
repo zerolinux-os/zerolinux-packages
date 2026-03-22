@@ -13,11 +13,12 @@ install_packages() {
     local packages=$(grep -v "^#" "$tmpfile" | grep -v "^$" | sed "s/[[:space:]]//g" | tr "\n" " ")
     rm -f "$tmpfile"
 
-    info "Installing packages (this may take a while)..."
-    if ! pacman -S --noconfirm --needed $packages 2>/dev/null; then
-        warning "Some packages failed, trying with paru..."
-        sudo -u "$REAL_USER" paru -S --noconfirm --needed $packages
-    fi
+    info "Installing packages with pacman..."
+    pacman -S --noconfirm --needed $packages 2>/dev/null || true
+
+    info "Installing AUR packages with paru..."
+    sudo -u "$REAL_USER" paru -S --noconfirm --needed $packages 2>/dev/null || true
+
     success "Packages installed successfully"
 }
 
@@ -39,7 +40,7 @@ install_zerolinux_packages() {
         git clone --depth=1 "https://github.com/zerolinux-os/zerolinux-packages.git" \
             "$tmpdir/repo" &>/dev/null
         cd "$tmpdir/repo/$pkg"
-        sudo -u "$REAL_USER" makepkg -si --noconfirm 2>/dev/null && \
+        sudo -u "$REAL_USER" makepkg -si --noconfirm &>/dev/null && \
             success "$pkg installed" || warning "$pkg failed"
         cd ~
         rm -rf "$tmpdir"
