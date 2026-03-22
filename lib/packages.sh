@@ -8,7 +8,7 @@ install_packages() {
 
     info "Fetching packages list..."
     local tmpfile=$(mktemp)
-    curl -sL "$PACKAGES_URL" -o "$tmpfile"
+    curl -4 -sL "$PACKAGES_URL" -o "$tmpfile"
     if [[ ! -s "$tmpfile" ]]; then
         error "Failed to fetch packages list!"
     fi
