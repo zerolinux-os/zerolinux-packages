@@ -1,0 +1,21 @@
+pkgname=zerolinux-theme-sddm
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="ZeroLinux SDDM theme"
+arch=('any')
+license=('GPL3')
+depends=(sddm qt6-declarative)
+source=("zerolinux-theme-sddm::git+https://github.com/zerolinux-os/zerolinux-config.git")
+sha256sums=('SKIP')
+
+package() {
+    install -dm755 "$pkgdir/usr/share/sddm/themes/ZeroLinux-sddm"
+    cp -r "$srcdir/zerolinux-theme-sddm/sddm/themes/ZeroLinux-sddm/." \
+        "$pkgdir/usr/share/sddm/themes/ZeroLinux-sddm/"
+
+    install -Dm644 /dev/stdin \
+        "$pkgdir/usr/lib/sddm/sddm.conf.d/zerolinux.conf" << 'CONF'
+[Theme]
+Current=ZeroLinux-sddm
+CONF
+}

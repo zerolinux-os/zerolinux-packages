@@ -1,0 +1,29 @@
+pkgname=zerolinux-calamares
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="ZeroLinux Calamares installer configuration"
+arch=('any')
+license=('GPL3')
+depends=(calamares)
+source=("zerolinux-calamares::git+https://github.com/zerolinux-os/zerolinux-config.git")
+sha256sums=('SKIP')
+
+package() {
+    # calamares config
+    install -dm755 "$pkgdir/etc/calamares"
+    cp -r "$srcdir/zerolinux-calamares/calamares/." \
+        "$pkgdir/etc/calamares/"
+
+    # desktop entry
+    install -Dm644 /dev/stdin \
+        "$pkgdir/usr/share/applications/zerolinux-calamares.desktop" << 'DESK'
+[Desktop Entry]
+Name=Install ZeroLinux
+Comment=Install ZeroLinux to your system
+Exec=calamares
+Icon=calamares
+Terminal=false
+Type=Application
+Categories=System;
+DESK
+}

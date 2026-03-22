@@ -1,0 +1,41 @@
+pkgname=zerolinux-pm
+pkgver=3.0.0
+pkgrel=1
+pkgdesc="ZeroLinux Package Manager - GUI + CLI frontend for pacman, AUR, Flatpak"
+arch=('x86_64')
+license=('GPL3')
+depends=(python python-pyqt6 paru flatpak)
+makedepends=()
+source=("zerolinux-pm::git+https://github.com/zerolinux-os/zerolinux-pm.git")
+sha256sums=('SKIP')
+
+package() {
+    cd "$srcdir/zerolinux-pm"
+    install -dm755 "$pkgdir/opt/zerolinux-pm"
+    cp -r . "$pkgdir/opt/zerolinux-pm/"
+
+    install -Dm755 /dev/stdin "$pkgdir/usr/bin/zerolinux-pm" << 'BIN'
+#!/bin/bash
+cd /opt/zerolinux-pm
+exec python3 main.py "$@"
+BIN
+
+    install -Dm755 /dev/stdin "$pkgdir/usr/bin/zerolinux-pm-cli" << 'BIN'
+#!/bin/bash
+cd /opt/zerolinux-pm
+exec python3 -m app.cli "$@"
+BIN
+
+    install -Dm644 /dev/stdin \
+        "$pkgdir/usr/share/applications/zerolinux-pm.desktop" << 'DESK'
+[Desktop Entry]
+Name=ZeroLinux Package Manager
+GenericName=Package Manager
+Comment=ZeroLinux package manager - pacman, AUR, Flatpak
+Exec=zerolinux-pm
+Icon=zerolinux-pm
+Terminal=false
+Type=Application
+Categories=System;PackageManager;
+DESK
+}

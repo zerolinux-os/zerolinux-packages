@@ -1,0 +1,20 @@
+pkgname=zerolinux-theme-grub
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="ZeroLinux GRUB theme"
+arch=('any')
+license=('GPL3')
+depends=(grub)
+source=("zerolinux-theme-grub::git+https://github.com/zerolinux-os/zerolinux-config.git")
+sha256sums=('SKIP')
+
+package() {
+    install -dm755 "$pkgdir/boot/grub/themes/ZeroLinux"
+    cp -r "$srcdir/zerolinux-theme-grub/grub/themes/ZeroLinux-grub/." \
+        "$pkgdir/boot/grub/themes/ZeroLinux/"
+
+    install -Dm644 /dev/stdin \
+        "$pkgdir/etc/default/grub.d/zerolinux-theme.cfg" << 'CONF'
+GRUB_THEME="/boot/grub/themes/ZeroLinux/theme.txt"
+CONF
+}

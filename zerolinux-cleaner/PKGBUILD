@@ -1,0 +1,34 @@
+pkgname=zerolinux-cleaner
+pkgver=3.0.0
+pkgrel=1
+pkgdesc="Advanced System Cleaner & Updater for ZeroLinux"
+arch=('x86_64')
+license=('GPL3')
+depends=(gcc-libs glibc)
+makedepends=(rust cargo)
+source=("zerolinux-cleaner::git+https://github.com/zerolinux-os/zerolinux-cleaner.git")
+sha256sums=('SKIP')
+
+build() {
+    cd "$srcdir/zerolinux-cleaner"
+    cargo build --release
+}
+
+package() {
+    cd "$srcdir/zerolinux-cleaner"
+    install -Dm755 target/release/zerolinux-cleaner \
+        "$pkgdir/usr/bin/zerolinux-cleaner"
+
+    install -Dm644 /dev/stdin \
+        "$pkgdir/usr/share/applications/zerolinux-cleaner.desktop" << 'DESK'
+[Desktop Entry]
+Name=ZeroLinux Cleaner
+GenericName=System Cleaner
+Comment=Advanced system cleaner and updater
+Exec=zerolinux-cleaner
+Icon=zerolinux-cleaner
+Terminal=false
+Type=Application
+Categories=System;GTK;
+DESK
+}

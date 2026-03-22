@@ -1,0 +1,23 @@
+pkgname=zerolinux-icons
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="ZeroLinux official icon theme - Slot Beauty Dark"
+arch=('any')
+license=('GPL3')
+depends=()
+source=("zerolinux-icons::git+https://github.com/zerolinux-os/zerolinux-themes.git")
+sha256sums=('SKIP')
+
+package() {
+    install -dm755 "$pkgdir/usr/share/icons/ZeroLinux-icons"
+    cp -r "$srcdir/zerolinux-icons/icons/ZeroLinux-icons/." \
+        "$pkgdir/usr/share/icons/ZeroLinux-icons/"
+
+    install -dm755 "$pkgdir/usr/share/icons/ZeroLinux-icons-symbolic"
+    cp -r "$srcdir/zerolinux-icons/icons/ZeroLinux-icons-symbolic/." \
+        "$pkgdir/usr/share/icons/ZeroLinux-icons-symbolic/"
+
+    install -dm755 "$pkgdir/usr/share/icons/Bibata-Modern-Classic"
+    cp -r "$srcdir/zerolinux-icons/cursors/Bibata-Modern-Classic/." \
+        "$pkgdir/usr/share/icons/Bibata-Modern-Classic/"
+}
