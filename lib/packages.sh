@@ -25,24 +25,28 @@ install_packages() {
 install_zerolinux_packages() {
     step "Installing ZeroLinux custom packages"
 
+    local tmpdir=$(mktemp -d)
+    info "Cloning zerolinux-packages..."
+    git clone --depth=1 "https://github.com/zerolinux-os/zerolinux-packages.git" \
+        "$tmpdir/repo" || error "Failed to clone zerolinux-packages!"
+
     local pkgs=(
-        "zerolinux-cleaner"
-        "zerolinux-pm"
         "zerolinux-theme-grub"
         "zerolinux-theme-sddm"
         "zerolinux-icons"
         "zerolinux-wallpapers"
+        "zerolinux-pm"
+        "zerolinux-cleaner"
     )
 
     for pkg in "${pkgs[@]}"; do
         info "Installing $pkg..."
-        local tmpdir=$(mktemp -d)
-        git clone --depth=1 "https://github.com/zerolinux-os/zerolinux-packages.git" \
-            "$tmpdir/repo" &>/dev/null
         cd "$tmpdir/repo/$pkg"
-        sudo -u "$REAL_USER" makepkg -si --noconfirm &>/dev/null && \
-            success "$pkg installed" || warning "$pkg failed"
-        cd ~
-        rm -rf "$tmpdir"
+        chown -R "$REAL_USER":"$REAL_USER" "$tmpdir/repo/$pkg"
+        sudo -u "$REAL_USER" makepkg -si --noconfirm && \
+            success "$pkg installed" || warning "$pkg failed - check manually"
+        cd /tmp
     done
+
+    rm -rf "$tmpdir"
 }
