@@ -8,7 +8,10 @@ install_packages() {
 
     info "Fetching packages list..."
     local tmpfile=$(mktemp)
-    curl -sL "$PACKAGES_URL" -o "$tmpfile" || error "Failed to fetch packages list!"
+    curl -sL "$PACKAGES_URL" -o "$tmpfile"
+    if [[ ! -s "$tmpfile" ]]; then
+        error "Failed to fetch packages list!"
+    fi
 
     local packages=$(grep -v "^#" "$tmpfile" | grep -v "^$" | sed "s/[[:space:]]//g" | tr "\n" " ")
     rm -f "$tmpfile"
